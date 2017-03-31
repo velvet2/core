@@ -142,7 +142,7 @@ App.get("/users", (req, res)=>{
  * api/users/me:
  *   get:
  *     tags:
- *       - authentication
+ *       - User
  *     summary: "Get current user infomation"
  *     security:
  *       - Token: []
@@ -155,4 +155,9 @@ App.get("/users", (req, res)=>{
  *       200:
  *         description: Array of user
  */
-App.get('/users/me', passport.authenticate('token'));
+App.get('/users/me', passport.authenticate('token', { session:false }), (request, response)=>{
+    // console.log(request.user)
+    db.User.findOne({ where : { id: request.user.id}}).then( ( user ) => {
+        response.json({id: user.dataValues.id, username: user.dataValues.username})
+    });
+});

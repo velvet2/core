@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 
 // passport
 app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.session())
 
 // logger
 app.use(morgan('dev'));

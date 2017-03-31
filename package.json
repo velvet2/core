@@ -37,8 +37,6 @@
     "morgan": "^1.8.0",
     "passport": "^0.3.2",
     "passport-accesstoken": "^0.1.0",
-    "passport-local": "^1.0.0",
-    "passport-localapikey": "0.0.3",
     "sequelize": "^3.30.4",
     "sequelize-cli": "^2.7.0",
     "sqlite3": "^3.1.8",

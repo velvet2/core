@@ -1,23 +1,17 @@
 import passport from 'passport';
 import { Strategy } from 'passport-accesstoken';
+import db from '../models';
 
 passport.use(new Strategy({
         tokenHeader: "Authorization",
         tokenField: "Token"
     }, (token, done) => {
-      console.log("token", token)
-      return done(null, false);
-    // findUser(username, function (err, user) {
-    //   if (err) {
-    //     return done(err)
-    //   }
-    //   if (!user) {
-    //     return done(null, false)
-    //   }
-    //   if (password !== user.password  ) {
-    //     return done(null, false)
-    //   }
-    //   return done(null, user)
-    // })
+      db.SecurityToken.findOne({ where :  { token: token }, include: [db.User]}).then( (tok )=>{
+          if ( tok && tok.User ){
+              done(null, { id: tok.User.id});
+          } else {
+              done(null, false, { "error": "invalid token"});
+          }
+      });
   }
 ))
