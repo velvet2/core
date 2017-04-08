@@ -156,7 +156,6 @@ App.get("/users", (req, res)=>{
  *         description: Array of user
  */
 App.get('/users/me', passport.authenticate('token', { session:false }), (request, response)=>{
-    // console.log(request.user)
     db.User.findOne({ where : { id: request.user.id}}).then( ( user ) => {
         response.json({id: user.dataValues.id, username: user.dataValues.username})
     });
