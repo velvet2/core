@@ -5,6 +5,7 @@ import './users';
 import './dataset';
 import './data';
 import './label';
+import './project';
 import '../middleware/authentication';
 
 import { App } from './app';

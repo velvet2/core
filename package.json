@@ -29,6 +29,7 @@
   "author": "Jason Miller <jason@developit.ca>",
   "license": "MIT",
   "dependencies": {
+    "angular2-virtual-scroll": "^0.1.5",
     "async": "^2.2.0",
     "body-parser": "^1.17.1",
     "compression": "^1.5.2",

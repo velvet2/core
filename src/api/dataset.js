@@ -189,3 +189,35 @@ App.get('/dataset/:id', function (req, res) {
             res.status(500).json({"error": err});
         });
 });
+
+/**
+ * @swagger
+ * api/dataset/{id}:
+ *   delete:
+ *     tags:
+ *       - Dataset
+ *     description: delete dataset
+ *     summary: "delete dataset"
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: List of rooms
+ */
+App.delete('/dataset/:id', function (req, res) {
+    Database.query("DELETE FROM dataset WHERE id=:id",
+                {   replacements: { id: req.params.id},
+                    type: Database.QueryTypes.DELETE })
+        .then(function(){
+            res.status(200).json({})
+        }, function(err){
+            res.status(500).json({"error": err});
+        });
+});

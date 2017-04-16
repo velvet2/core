@@ -1,14 +1,16 @@
 "use strict";
 
 export default (Sequelize, DataTypes) => {
-    let room = Sequelize.define("Room", {
+    let project = Sequelize.define("Project", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
-        name: DataTypes.STRING
+        name: DataTypes.STRING,
+        dataset: DataTypes.INTEGER,
+        label: DataTypes.STRING
     });
 
-    return room;
+    return project;
 };
