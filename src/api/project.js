@@ -14,9 +14,11 @@ import _ from 'lodash';
  *     properties:
  *       name:
  *         type: string
- *       dataset:
+ *       dataset_id:
  *         type: integer
  *       label:
+ *         type: string
+ *       config:
  *         type: string
  */
 
@@ -35,7 +37,7 @@ import _ from 'lodash';
  *         description: List of project
  */
 App.get('/project', function(req, res){
-    Project.findAll({attributes: ['id', 'name', 'name', 'dataset']}).then( function(rows){
+    Project.findAll({attributes: ['id', 'name', 'name', 'dataset_id']}).then( function(rows){
         res.json(_.map(rows, function(value){
             return value.dataValues;
         }))
@@ -65,8 +67,59 @@ App.get('/project', function(req, res){
  *         description: List of rooms
  */
 App.post('/project', function(req, res){
-    Project.create(req.body).then(function(v){
+    Project.create(_.assign({'config': '{}'}, req.body)).then(function(v){
         res.json(v)
+    });
+});
+
+/**
+ * @swagger
+ * api/project/{id}:
+ *   put:
+ *     tags:
+ *       - Project
+ *     description: Edit project
+ *     summary: "Edit project"
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: body
+ *         in: body
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/Project'
+ *     responses:
+ *       200:
+ *         description: List of rooms
+ */
+App.put('/project/:id', function(req, res){
+    let config = req.body.config || {};
+
+    Project.findOne({where: { id : req.params.id}}).then( function(rows){
+        if(rows){
+            rows.dataValues.name = req.body.name || rows.dataValues.name;
+            if(typeof(config) == 'object'){
+                try {
+                    rows.dataValues.config = JSON.parse(rows.dataValues.config);
+                } catch (e) {}
+                rows.dataValues.config = _.assign(rows.dataValues.config, config);
+                rows.dataValues.config = JSON.stringify(rows.dataValues.config);
+            }
+
+            Project.update(rows.dataValues, {where: {id: req.params.id}}).then(function(rows){
+                res.status(200).json()
+            }, function(err){
+                res.status(500).json()
+            })
+        } else {
+            res.status(404).json()
+        }
     });
 });
 
@@ -76,8 +129,8 @@ App.post('/project', function(req, res){
  *   get:
  *     tags:
  *       - Project
- *     description: Read projectt
- *     summary: Read project
+ *     description: Edit projectt
+ *     summary: Edit project
  *     consumes:
  *       - application/json
  *     produces:
@@ -100,6 +153,7 @@ App.get('/project/:id', function (req, res) {
         }
     });
 });
+
 
 /**
  * @swagger
@@ -124,7 +178,7 @@ App.get('/project/:id', function (req, res) {
  */
 App.delete('/project/:id', function (req, res) {
     Project.destroy({where: { id : req.params.id}}).then( function(rows){
-        if(row){
+        if(rows){
             res.status(200).json()
         } else {
             res.status(404).json()

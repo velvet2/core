@@ -16,7 +16,7 @@ module.exports = {
             },
         name: Sequelize.STRING,
         dataset_id: Sequelize.INTEGER,
-        label_id: Sequelize.INTEGER,
+        label: Sequelize.STRING,
         config: Sequelize.STRING,
         createdAt: Sequelize.DATE,
         updatedAt: Sequelize.DATE
