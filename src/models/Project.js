@@ -8,8 +8,9 @@ export default (Sequelize, DataTypes) => {
             autoIncrement: true
         },
         name: DataTypes.STRING,
-        dataset: DataTypes.INTEGER,
-        label: DataTypes.STRING
+        dataset_id: DataTypes.INTEGER,
+        label: DataTypes.STRING,
+        config: DataTypes.STRING
     });
 
     return project;

@@ -3,8 +3,6 @@ import { Router } from 'express';
 import './rooms';
 import './users';
 import './dataset';
-import './data';
-import './label';
 import './project';
 import '../middleware/authentication';
 

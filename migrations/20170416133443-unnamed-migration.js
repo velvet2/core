@@ -15,11 +15,20 @@ module.exports = {
                 autoIncrement: true
             },
         name: Sequelize.STRING,
-        dataset: Sequelize.INTEGER,
-        label: Sequelize.STRING,
+        dataset_id: Sequelize.INTEGER,
+        label_id: Sequelize.INTEGER,
+        config: Sequelize.STRING,
         createdAt: Sequelize.DATE,
         updatedAt: Sequelize.DATE
     });
+
+    queryInterface.createTable('project_data', {
+        project_id: Sequelize.INTEGER,
+        data_id: Sequelize.INTEGER,
+        config: Sequelize.STRING,
+    });
+
+
   },
 
   down: function (queryInterface, Sequelize) {

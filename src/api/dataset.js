@@ -38,7 +38,7 @@ var dataPath = path.join(__dirname, '/../../src/public/data/')
  *         description: List of datasets
  */
 App.get('/dataset', function(req, res){
-    Database.query("SELECT id, name FROM dataset")
+    Database.query("SELECT id, name FROM datasets")
     .then(function(rows){
         res.status(200).json({'data': rows[0]})
     }, function(err){
@@ -74,7 +74,7 @@ App.post('/dataset', function(req, res){
     if(name == undefined){
         res.status(500).json({"error": "name must be defined"});
     } else {
-        Database.query("INSERT INTO dataset (name, path) VALUES (:name, :path)",
+        Database.query("INSERT INTO datasets (name, path) VALUES (:name, :path)",
             {   replacements: { name: name, path: path},
                 type: Database.QueryTypes.INSERT })
             .then(function(insertedId){
@@ -119,7 +119,7 @@ App.post('/dataset/upload', upload.single('file'), function (req, res) {
     if(!req.body.id || !req.file || !req.body.path){
         res.status(500).json({"error": "insufficient data to upload file"});
     } else {
-        Database.query("SELECT * FROM dataset WHERE id=:id",
+        Database.query("SELECT * FROM datasets WHERE id=:id",
             { replacements: { id: req.body.id},
               type: Database.QueryTypes.SELECT })
             .then(function(row){
@@ -138,7 +138,7 @@ App.post('/dataset/upload', upload.single('file'), function (req, res) {
                         }
 
                         fs.writeFile(newFullPath, data, function (err) {
-                            Database.query("INSERT into DATA (dataset_id, name, path) VALUES (:id, :name, :path)",
+                            Database.query("INSERT into datas (dataset_id, name, path) VALUES (:id, :name, :path)",
                                 {   replacements: { id: req.body.id,
                                                     name: req.file.originalname,
                                                     path: filePath},
@@ -180,7 +180,7 @@ App.post('/dataset/upload', upload.single('file'), function (req, res) {
  *         description: List of rooms
  */
 App.get('/dataset/:id', function (req, res) {
-    Database.query("SELECT id, name, path FROM data WHERE dataset_id=:id",
+    Database.query("SELECT id, name, path FROM datas WHERE dataset_id=:id",
                 {   replacements: { id: req.params.id},
                     type: Database.QueryTypes.SELECT })
         .then(function(row){
@@ -212,7 +212,7 @@ App.get('/dataset/:id', function (req, res) {
  *         description: List of rooms
  */
 App.delete('/dataset/:id', function (req, res) {
-    Database.query("DELETE FROM dataset WHERE id=:id",
+    Database.query("DELETE FROM datasets WHERE id=:id",
                 {   replacements: { id: req.params.id},
                     type: Database.QueryTypes.DELETE })
         .then(function(){
