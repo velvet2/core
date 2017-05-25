@@ -25,7 +25,8 @@ module.exports = {
     queryInterface.createTable('project_data', {
         project_id: Sequelize.INTEGER,
         data_id: Sequelize.INTEGER,
-        config: Sequelize.STRING,
+        label: Sequelize.STRING,
+        inference: Sequelize.STRING
     });
 
 
