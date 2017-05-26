@@ -2,6 +2,7 @@ import { App } from './app';
 import { Project, Data, ProjectData } from '../models';
 import _ from 'lodash';
 import { Database } from '../db';
+import jsep from 'jsep';
 
 /**
  * @swagger
@@ -146,6 +147,20 @@ App.put('/project/:id', function(req, res){
  *         description: project detail
  */
 App.get('/project/:id', function (req, res) {
+    let search, searchTree;
+    if(req.query.encode){
+      search = Buffer.from(req.query.search, 'base64').toString();
+    } else {
+      search = req.query.search;
+    }
+    console.log(search)
+    try{
+      searchTree = jsep(search)
+    } catch (e){
+      console.log("fail to parse tree")
+      searchTree = undefined
+    }
+
     Project.findOne({where: { id : req.params.id}}).then( function(rows){
       if (rows){
         Database.query("SELECT id, name, path, label, inference FROM datas LEFT JOIN project_data on project_data.data_id = datas.id WHERE dataset_id=:dataset_id ",
@@ -156,6 +171,11 @@ App.get('/project/:id', function (req, res) {
             v.inference = JSON.parse(v.inference);
             return v;
           });
+
+          if(searchTree){
+            rows.dataValues.datas = filter(rows.dataValues.datas, searchTree);
+          }
+
           rows.dataValues.config = JSON.parse(rows.dataValues.config)
           res.json(rows.dataValues)
         })
@@ -164,6 +184,72 @@ App.get('/project/:id', function (req, res) {
       }
     });
 });
+
+
+function filter(object, filter_tree){
+  var filtered = _.filter(object, (v) => {
+    return _filter(v, filter_tree);
+  });
+
+  return filtered;
+}
+
+function _filter(object, filter_tree){
+  // do not use console, it will cause lag if object is massive
+  var left, right;
+  switch(filter_tree.type){
+    case 'BinaryExpression':
+      left = _filter(object, filter_tree.left);
+      right = _filter(object, filter_tree.right);
+      if( typeof left == 'string' &&
+          typeof right == 'string' &&
+          filter_tree.operator == '=='){
+        try {
+          return left.match(right);
+        } catch (err) {
+          return undefined;
+        }
+      } else {
+        return eval(left + filter_tree.operator + right);
+      }
+    case 'Compound':
+      // console.error("Unknown", filter_tree)
+      return undefined;
+    case 'Identifier':
+      return object[filter_tree.name];
+    case 'MemberExpression':
+      left  = _filter(object, filter_tree.object);
+      if(left == undefined){
+        return undefined;
+      } else {
+        return left[filter_tree.property.name];
+      }
+    case 'Literal':
+      return filter_tree.value;
+    case 'ThisExpression':
+      return undefined;
+    case 'CallExpression':
+      // console.error("Unknown", filter_tree)
+      return undefined;
+    case 'UnaryExpression':
+      left = _filter(object, filter_tree.argument);
+      return eval(filter_tree.operator + left);
+    case 'LogicalExpression':
+      left = _filter(object, filter_tree.left);
+      right = _filter(object, filter_tree.right);
+      return eval(left + filter_tree.operator + right);
+    case 'ConditionalExpression':
+      left = _filter(object, filter_tree.test);
+      if(left){
+        return filter_tree.consequent.value;
+      } else {
+        return filter_tree.alternate.value;
+      }
+    case 'ArrayExpression':
+      // console.error("Unknown", filter_tree)
+      return undefined;
+  }
+}
 
 
 /**
