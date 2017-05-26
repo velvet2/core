@@ -1,6 +1,7 @@
 import { App } from './app';
-import { Project } from '../models';
+import { Project, Data, ProjectData } from '../models';
 import _ from 'lodash';
+import { Database } from '../db';
 
 /**
  * @swagger
@@ -146,11 +147,21 @@ App.put('/project/:id', function(req, res){
  */
 App.get('/project/:id', function (req, res) {
     Project.findOne({where: { id : req.params.id}}).then( function(rows){
-        if(rows){
-            res.json(rows.dataValues)
-        } else {
-            res.status(404).json()
-        }
+      if (rows){
+        Database.query("SELECT id, name, path, label, inference FROM datas LEFT JOIN project_data on project_data.data_id = datas.id WHERE dataset_id=:dataset_id ",
+            { replacements: { dataset_id: rows.dataValues.dataset_id, },
+              type: Database.QueryTypes.SELECT }).then((datas)=>{
+          rows.dataValues.datas = _.map(datas, (v)=>{
+            v.label = JSON.parse(v.label);
+            v.inference = JSON.parse(v.inference);
+            return v;
+          });
+          rows.dataValues.config = JSON.parse(rows.dataValues.config)
+          res.json(rows.dataValues)
+        })
+      } else {
+        res.status(404).json()
+      }
     });
 });
 

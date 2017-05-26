@@ -7,7 +7,9 @@ export default (Sequelize, DataTypes) => {
         label: DataTypes.STRING,
         inference: DataTypes.STRING
     }, {
-      tableName: "project_data"
+      tableName: "project_data",
+      createdAt: false,
+      updatedAt: false
     });
 
     return project;

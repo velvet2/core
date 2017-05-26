@@ -4,6 +4,7 @@ import './rooms';
 import './users';
 import './dataset';
 import './project';
+import './projectdata'
 import '../middleware/authentication';
 
 import { App } from './app';
