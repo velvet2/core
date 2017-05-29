@@ -185,6 +185,7 @@ App.get('/project/:id', function (req, res) {
     });
 });
 
+console.log(filter([{}], jsep("!label.label")))
 
 function filter(object, filter_tree){
   var filtered = _.filter(object, (v) => {
@@ -205,7 +206,7 @@ function _filter(object, filter_tree){
           typeof right == 'string' &&
           filter_tree.operator == '=='){
         try {
-          return left.match(right);
+          return left.match(right) ? true : false;
         } catch (err) {
           return undefined;
         }
@@ -233,7 +234,11 @@ function _filter(object, filter_tree){
       return undefined;
     case 'UnaryExpression':
       left = _filter(object, filter_tree.argument);
-      return eval(filter_tree.operator + left);
+      if( typeof left == "string"){
+          return eval(filter_tree.operator + '\'' + left + '\'');
+      } else {
+          return eval(filter_tree.operator + left);
+      }
     case 'LogicalExpression':
       left = _filter(object, filter_tree.left);
       right = _filter(object, filter_tree.right);
