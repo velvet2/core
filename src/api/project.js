@@ -163,8 +163,8 @@ App.get('/project/:id', function (req, res) {
 
     Project.findOne({where: { id : req.params.id}}).then( function(rows){
       if (rows){
-        Database.query("SELECT id, name, path, label, inference FROM datas LEFT JOIN project_data on project_data.data_id = datas.id WHERE dataset_id=:dataset_id ",
-            { replacements: { dataset_id: rows.dataValues.dataset_id, },
+        Database.query("SELECT id, name, path, label, inference FROM datas LEFT JOIN project_data on project_data.data_id = datas.id AND project_id = :pid WHERE dataset_id=:dataset_id",
+            { replacements: { dataset_id: rows.dataValues.dataset_id,  pid: req.params.id},
               type: Database.QueryTypes.SELECT }).then((datas)=>{
           rows.dataValues.datas = _.map(datas, (v)=>{
             v.label = JSON.parse(v.label);
