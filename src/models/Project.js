@@ -9,6 +9,8 @@ export default (Sequelize, DataTypes) => {
         dataset_id: DataTypes.INTEGER,
         label: DataTypes.STRING,
         config: DataTypes.STRING
+    }, {
+      tableName: "projects"
     });
 
     return project;
