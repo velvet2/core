@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import mkdirp from 'mkdirp';
 import multer from 'multer'
 var upload = multer({ dest: 'uploads/' });
-var dataPath = path.join(__dirname, '/../../src/public/data/')
+var dataPath = path.join(__dirname, '/../public/data/')
 
 /**
  * @swagger
