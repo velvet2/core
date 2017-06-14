@@ -19,6 +19,8 @@ WORKDIR /www
 
 RUN npm run build
 
+RUN mkdir /www/dist/public/data
+
 # set your port
 ENV PORT 8080
 

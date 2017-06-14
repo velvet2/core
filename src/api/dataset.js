@@ -1,5 +1,7 @@
 import { App } from './app';
 import { Database } from '../db';
+import { Dataset } from '../models';
+
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
@@ -74,14 +76,11 @@ App.post('/dataset', function(req, res){
     if(name == undefined){
         res.status(500).json({"error": "name must be defined"});
     } else {
-        Database.query("INSERT INTO datasets (name, path) VALUES (:name, :path)",
-            {   replacements: { name: name, path: path},
-                type: Database.QueryTypes.INSERT })
-            .then(function(insertedId){
-                res.json({"data": {"id": insertedId}});
-            }, function(err){
-                res.status(500).json({"error": err.message});
-            });
+        Dataset.create({name: name, path: path}).then(function(v){
+            res.json({data: v.dataValues})
+        }, function(err){
+            res.json({error: err})
+        });
     }
 });
 
