@@ -13,8 +13,11 @@ RUN cd /www; npm install
 # Copy app source
 COPY . /www
 
+
 # Set work directory to /www
 WORKDIR /www
+
+RUN npm run build
 
 # set your port
 ENV PORT 8080

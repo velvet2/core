@@ -1,5 +1,3 @@
-"use strict";
-
 export default (Sequelize, DataTypes) => {
     let user = Sequelize.define("User", {
         id: {

@@ -1,5 +1,3 @@
-"use strict";
-
 export default (Sequelize, DataTypes) => {
     let room = Sequelize.define("Room", {
         id: {

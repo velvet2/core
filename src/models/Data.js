@@ -1,5 +1,3 @@
-"use strict";
-
 export default (Sequelize, DataTypes) => {
     let data = Sequelize.define("Data", {
         id: {   type: DataTypes.INTEGER,
